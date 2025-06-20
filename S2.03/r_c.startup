@@ -1,0 +1,16 @@
+#!/bin/bash
+ip a add 10.0.0.130/26 dev eth0
+ip a add 172.15.99.254/22 dev eth1
+
+ip link set dev eth0 up
+ip link set dev eth1 up
+
+ip route add default via 10.0.0.129
+
+echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" > /etc/resolv.conf
+
+apt update
+apt upgrade -y
+DEBIAN_FRONTEND=noninteractive apt-get install -y -o Dpkg::Options::="--force-confold" isc-dhcp-server
+
+systemctl start isc-dhcp-server
